@@ -24,48 +24,6 @@ In Swift, there are two key type mechanisms related to protocols: existential ty
 - **Disadvantages**:
   - Not suitable for storing different types in a collection (only for returning a specific type).
 
-```swift
-protocol Animal {
-    func makeSound() -> String
-}
-
-struct Dog: Animal {
-    func makeSound() -> String { return "Woof" }
-}
-
-struct Cat: Animal {
-    func makeSound() -> String { return "Meow" }
-}
-
-// Using any Animal
-let anyAnimal: any Animal = Dog()
-print(anyAnimal.makeSound()) // Displays "Woof"
-
-// Array of different types conforming to the protocol
-let animals: [any Animal] = [Dog(), Cat()]
-for animal in animals {
-    print(animal.makeSound()) // Displays "Woof" and "Meow"
-}
-```
-
-```swift
-protocol Animal {
-    func makeSound() -> String
-}
-
-struct Dog: Animal {
-    func makeSound() -> String { return "Woof" }
-}
-
-// Function returning a specific but undisclosed type (some Animal)
-func createDog() -> some Animal {
-    return Dog()
-}
-
-let dog: some Animal = createDog()
-print(dog.makeSound()) // Displays "Woof"
-```
-
 ## 2. Differences in Behavior Before and After Swift 5.6
 
 ### 2.1 Before Swift 5.6 (e.g., Swift 5.5 and Earlier)
@@ -91,7 +49,7 @@ print(dog.makeSound()) // Displays "Woof"
   let animals: [Animal] = [Dog(), Cat(), Bird()]
 
   for animal in animals {
-      print(animal.makeSound()) // Wyświetla "Woof", "Meow", "Tweet"
+      print(animal.makeSound()) // Displays "Woof", "Meow", "Tweet"
   }
   ```
 - **Why it worked**: Swift automatically assumed that `Animal` was an existential type (`any Animal`), allowing the storage of different types (`Dog`, `Cat`, `Bird`) in an array without explicit `any`.
@@ -99,6 +57,7 @@ print(dog.makeSound()) // Displays "Woof"
 ### 2.2 After Swift 5.6 (Swift 5.6, 5.7, 5.8, 6.0)
 - **Change**: In Swift 5.6, explicit designation of `any` for existential types was introduced. Protocols are no longer implicitly treated as existential types, meaning `let animals: [Animal] = [Dog(), Cat(), Bird()]` no longer works and requires explicit `any Animal` (`let animals: [any Animal] = [Dog(), Cat(), Bird()]`).
 - - **Example (error Swift 5.6+):**
+
 ```swift
 protocol Animal {
     func makeSound() -> String
@@ -116,14 +75,15 @@ struct Bird: Animal {
     func makeSound() -> String { return "Tweet" }
 }
 
-let animals: [Animal] = [Dog(), Cat(), Bird()] // Błąd: "Protocol 'Animal' can only be used as a generic constraint because it has Self or associated type requirements."
+let animals: [Animal] = [Dog(), Cat(), Bird()] // Error: "Protocol 'Animal' can only be used as a generic constraint because it has Self or associated type requirements."
 ```
 - **Solution (fix in Swift 5.6+):**
+
 ```swift
 let animals: [any Animal] = [Dog(), Cat(), Bird()]
 
 for animal in animals {
-    print(animal.makeSound()) // Wyświetla "Woof", "Meow", "Tweet"
+    print(animal.makeSound()) // Display "Woof", "Meow", "Tweet"
 }
 ```
 - **Why this changed**: The introduction of `any` aimed to increase code clarity, improve performance, and avoid ambiguities in handling existential types.
@@ -162,6 +122,7 @@ for animal in animals {
 - **Description**: Using `any Animal` allows storing different types conforming to a protocol in a variable or collection.
 - **Advantages**: Flexibility in storing different types.
 - **Disadvantages**: Lower performance, no access to type-specific methods without casting.
+
 ```swift
 protocol Animal {
     func makeSound() -> String
@@ -190,6 +151,7 @@ for animal in animals {
 - **Description**: Using `some Animal` in a function returns a specific but undisclosed type conforming to the protocol.
 - **Advantages**: Higher performance, compile-time safety, ideal for SwiftUI.
 - **Disadvantages**: Not suitable for storing different types in a collection.
+
 ```swift
 protocol Animal {
     func makeSound() -> String
@@ -214,6 +176,7 @@ print(dog.makeSound()) // Display "Woof"
 - For storing different types conforming to a protocol in a collection (e.g., array, dictionary).
 - When simplicity and flexibility are a priority, and performance is not critical.
 - Example: Storing different modifiers in an array for dynamic application.
+
 ```swift
 protocol Animal {
     func makeSound() -> String
