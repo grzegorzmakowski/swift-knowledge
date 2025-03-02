@@ -232,5 +232,3 @@ swift
     Po Swift 5.6: Wymaga jawnego any dla typów egzystencjalnych, co zwiększa przejrzystość i wydajność, ale wymaga modyfikacji istniejącego kodu.
     W Swift 6: Kompilator może automatycznie inferować any dla prostych protokołów, ale zaleca się jawne używanie any dla zgodności i czytelności.
     Rekomendacja: Unikaj any, tam gdzie to możliwe, na rzecz generyków, some lub enumów, jeśli zależy Ci na wydajności i bezpieczeństwie. Używaj any tylko wtedy, gdy elastyczność przechowywania różnych typów w kolekcji jest kluczowa.
-
-Ten dokument możesz skopiować i wrzucić bezpośrednio na GitHub jako plik .md (np. swift_types_any_some.md). Jest sformatowany w Markdown, co zapewni czytelność i strukturę w repozytorium. Jeśli chcesz dodać więcej szczegółów lub zmodyfikować format, daj znać – mogę dostosować dokument!
