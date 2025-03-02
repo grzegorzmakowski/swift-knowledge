@@ -121,11 +121,50 @@ for animal in animals {
 - **Opis**: Używanie `any Animal` pozwala na przechowywanie różnych typów spełniających protokół w zmiennej lub kolekcji.
 - **Zalety**: Elastyczność w przechowywaniu różnych typów.
 - **Wady**: Niższa wydajność, brak dostępu do metod specyficznych dla typu bez rzutowania.
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
 
+struct Dog: Animal {
+    func makeSound() -> String { return "Woof" }
+}
+
+struct Cat: Animal {
+    func makeSound() -> String { return "Meow" }
+}
+
+// Używanie any Animal
+let anyAnimal: any Animal = Dog()
+print(anyAnimal.makeSound()) // Wyświetla "Woof"
+
+// Tablica różnych typów spełniających protokół
+let animals: [any Animal] = [Dog(), Cat()]
+for animal in animals {
+    print(animal.makeSound()) // Wyświetla "Woof" i "Meow"
+}
+```
 ## 3.2 Przykład z `some` (Nieprzezroczysty Typ Zwracany)
 - **Opis**: Używanie `some Animal` w funkcji zwraca konkretny, ale nieujawniony typ spełniający protokół.
 - **Zalety**: Wyższa wydajność, bezpieczeństwo w compile time, idealne do SwiftUI.
 - **Wady**: Nie nadaje się do przechowywania różnych typów w kolekcji.
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
+
+struct Dog: Animal {
+    func makeSound() -> String { return "Woof" }
+}
+
+// Funkcja zwracająca konkretny, ale nieujawniony typ (some Animal)
+func createDog() -> some Animal {
+    return Dog()
+}
+
+let dog: some Animal = createDog()
+print(dog.makeSound()) // Wyświetla "Woof"
+```
 
 # 4. Kiedy Używać `any` vs `some`?
 
@@ -134,10 +173,52 @@ for animal in animals {
 - Gdy prostota i elastyczność są priorytetem, a wydajność nie jest krytyczna.
 - Przykład: Przechowywanie różnych modyfikatorów w tablicy do dynamicznego stosowania.
 
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
+
+struct Dog: Animal {
+    func makeSound() -> String { return "Woof" }
+}
+
+struct Cat: Animal {
+    func makeSound() -> String { return "Meow" }
+}
+
+// Używanie any Animal
+let anyAnimal: any Animal = Dog()
+print(anyAnimal.makeSound()) // Wyświetla "Woof"
+
+// Tablica różnych typów spełniających protokół
+let animals: [any Animal] = [Dog(), Cat()]
+for animal in animals {
+    print(animal.makeSound()) // Wyświetla "Woof" i "Meow"
+}
+```
+
 ## 4.2 Kiedy Używać `some`?
 - Do zwracania konkretnego typu w metodach/funkcjach, ale bez ujawniania tego typu (dla abstrakcji).
 - W SwiftUI, np. przy zwracaniu `some View` lub `some ViewModifier`.
 - Przykład: Definiowanie niestandardowych modyfikatorów widoków.
+
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
+
+struct Dog: Animal {
+    func makeSound() -> String { return "Woof" }
+}
+
+// Funkcja zwracająca konkretny, ale nieujawniony typ (some Animal)
+func createDog() -> some Animal {
+    return Dog()
+}
+
+let dog: some Animal = createDog()
+print(dog.makeSound()) // Wyświetla "Woof"
+```
 
 # 5. Ograniczenia i Alternatywy
 
@@ -152,11 +233,62 @@ for animal in animals {
   - **Zalety**: Wyższa wydajność, bezpieczeństwo w compile time.
   - **Wady**: Mniej elastyczności.
 
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
+
+func processAnimals<T: Animal>(_ animals: [T]) {
+    for animal in animals {
+        print(animal.makeSound())
+    }
+}
+
+let dogs: [Dog] = [Dog(), Dog()]
+processAnimals(dogs) // Działa z konkretnym typem
+```
+
 - **Enumy z Asocjacjami**:
   - **Opis**: Używanie enumów z asocjacjami pozwala na obsługę różnych typów w bezpieczny sposób.
   - **Zalety**: Bezpieczeństwo i czytelność.
   - **Wady**: Kod może być bardziej skomplikowany przy dużej liczbie typów.
- 
+
+```swift
+protocol Animal {
+    func makeSound() -> String
+}
+
+struct Dog: Animal {
+    func makeSound() -> String { return "Woof" }
+}
+
+struct Cat: Animal {
+    func makeSound() -> String { return "Meow" }
+}
+
+struct Bird: Animal {
+    func makeSound() -> String { return "Tweet" }
+}
+
+enum ZooAnimal {
+    case dog(Dog)
+    case cat(Cat)
+    case bird(Bird)
+}
+
+let zoo: [ZooAnimal] = [.dog(Dog()), .cat(Cat()), .bird(Bird())]
+
+for animal in zoo {
+    switch animal {
+    case .dog(let dog):
+        print(dog.makeSound())
+    case .cat(let cat):
+        print(cat.makeSound())
+    case .bird(let bird):
+        print(bird.makeSound())
+    }
+}
+```
 - # 6. Wnioski i Rekomendacje
 
 - **Przed Swift 5.6**: Protokóły były domyślnie typami egzystencjalnymi, co pozwalało na proste użycie `let animals: [Animal] = [Dog(), Cat(), Bird()]`. To prowadziło do niejasności i problemów z wydajnością, co skłoniło twórców Swift do wprowadzenia `any`.
